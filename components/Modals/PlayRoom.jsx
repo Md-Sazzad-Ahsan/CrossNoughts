@@ -11,7 +11,13 @@ export default function CreateRoom() {
 
   const router = useRouter();
 
+  const generateRoomCode = () => {
+    return Math.random().toString(36).substring(2, 8).toUpperCase();
+  };
+
   const handlePlay = () => {
+    
+    const roomCode = generateRoomCode();
     // Generate random values for selections if "Random" is chosen
     const selectedGameRound =
       gameRound === ""
@@ -36,7 +42,7 @@ export default function CreateRoom() {
 
     // Navigate to the room page with query params
     router.push(
-      `/room/computer?gameRound=${selectedGameRound}&turn=${selectedTurn}&symbol=${selectedSymbol}&difficulty=${selectedDifficulty}`
+      `/computer/${roomCode}?gameRound=${selectedGameRound}&turn=${selectedTurn}&symbol=${selectedSymbol}&difficulty=${selectedDifficulty}`
     );
   };
 
