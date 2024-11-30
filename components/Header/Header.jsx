@@ -76,7 +76,7 @@ const Header = () => {
             <Link href="/HighScore" className={`hover:underline ${getActiveClass("/portfolio")}`}>
               HighScore
             </Link>
-            <ToggleSwitch checked={darkMode} onChange={handleToggle} />
+            {/* <ToggleSwitch checked={darkMode} onChange={handleToggle} /> */}
             <Link href="/Profile">
               <button
                 className={`bg-gray-600 text-gray-50 py-1 px-8 rounded-lg hover:bg-gray-500 font-semibold ${getActiveClass(
@@ -98,18 +98,18 @@ const Header = () => {
         }}
         animate={hidden ? "hidden" : "visible"}
         transition={{ duration: 0.5, ease: "easeInOut" }}
-        className="lg:hidden bg-[var(--bg-color)] text-[var(--text-color)] shadow-md fixed w-full top-0 z-50 flex justify-between items-center py-1 px-5"
+        className="lg:hidden bg-[var(--bg-color)] text-[var(--text-color)] shadow-md fixed w-full top-0 z-60 flex justify-between items-center py-1 px-5"
       >
         <Link href="/" className="text-xl font-bold">
           CrossNoughts
         </Link>
         <section className="flex">
-          <div className="mt-4 px-4">
+          {/* <div className="mt-4 px-4">
             <ToggleSwitch checked={darkMode} onChange={handleToggle} />
-          </div>
+          </div> */}
           <button
             onClick={toggleSidebar}
-            className="text-3xl py-2 text-gray-700 dark:text-gray-50"
+            className="text-3xl py-2 text-gray-700"
             aria-label="Menu"
           >
             ☰

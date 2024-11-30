@@ -24,7 +24,7 @@ export default function HomePage() {
             className="object-cover mx-auto"
           />
         </div>
-        <div className="grid grid-cols-2 gap-2 text-xs md:text-sm text-gray-100 mx-5 md:mx-20 mb-10">
+        <div className="grid grid-cols-2 gap-2 text-sm md:text-md text-gray-100 mx-5 md:mx-20 mb-10">
           <button
             onClick={() => openModal("create")}
             className="col-span-1 bg-gray-800 hover:bg-gray-600 py-2 md:py-3"
