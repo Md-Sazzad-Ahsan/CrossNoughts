@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation"; // To get query params if needed
 import Board from "@/components/BoardDesign/Board";
+import Link from "next/link";
 
 export default function ComputerRoomPage() {
   const searchParams = useSearchParams();
@@ -19,6 +20,11 @@ export default function ComputerRoomPage() {
   const [computerMoves, setComputerMoves] = useState([]);
   const [currentRound, setCurrentRound] = useState(1); // Track the current round
   const [gameOver, setGameOver] = useState(false); // Track if all rounds are complete
+
+  const [playerScore, setPlayerScore] = useState(0);
+const [computerScore, setComputerScore] = useState(0);
+const [tieScore, setTieScore] = useState(0);
+
 
   const checkWinner = (grid) => {
     const winningPatterns = [
@@ -51,17 +57,29 @@ export default function ComputerRoomPage() {
 
   useEffect(() => {
     if (winner) {
+      // Update scores
+      if (winner === playerSymbol) {
+        setPlayerScore((prev) => prev + 1);
+      } else if (winner === computerSymbol) {
+        setComputerScore((prev) => prev + 1);
+      } else if (winner === "Tie") {
+        setTieScore((prev) => prev + 1);
+      }
+  
       if (currentRound < totalRounds) {
         setTimeout(() => {
           setCurrentRound((prev) => prev + 1);
           resetGame();
         }, 2000); // 2-second delay before starting the next round
       } else {
-        setGameOver(true);
+        setTimeout(() => {
+          setGameOver(true);
+        }, 3000); // 3-second delay before showing Game Over
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [winner, currentRound, totalRounds]);
+  
 
   const handlePlayerMove = (index) => {
     if (grid[index] || winner || !isPlayerTurn) return;
@@ -134,31 +152,33 @@ export default function ComputerRoomPage() {
     return null;
   };
 
-  const minimax = (grid, player) => {
+  const minimax = (grid, player, depth = 0) => {
     const availableSpots = grid
       .map((value, index) => (value === null ? index : null))
       .filter((index) => index !== null);
-
+  
     const result = checkWinner(grid);
-    if (result === playerSymbol) return { score: -10 };
-    if (result === computerSymbol) return { score: 10 };
-    if (availableSpots.length === 0) return { score: 0 };
-
+    if (result === playerSymbol) return { score: -10 + depth }; // Penalize deep wins for the opponent
+    if (result === computerSymbol) return { score: 10 - depth }; // Reward faster wins for the computer
+    if (availableSpots.length === 0) return { score: 0 }; // Tie
+  
     const moves = [];
     for (let i = 0; i < availableSpots.length; i++) {
       const move = {};
       move.index = availableSpots[i];
       grid[availableSpots[i]] = player;
-
+  
+      // Recursive call with incremented depth
       move.score =
         player === computerSymbol
-          ? minimax(grid, playerSymbol).score
-          : minimax(grid, computerSymbol).score;
-
-      grid[availableSpots[i]] = null;
+          ? minimax(grid, playerSymbol, depth + 1).score
+          : minimax(grid, computerSymbol, depth + 1).score;
+  
+      grid[availableSpots[i]] = null; // Undo move
       moves.push(move);
     }
-
+  
+    // Choose the best move based on maximizing/minimizing
     let bestMove;
     if (player === computerSymbol) {
       let bestScore = -Infinity;
@@ -177,9 +197,10 @@ export default function ComputerRoomPage() {
         }
       }
     }
-
+  
     return bestMove;
   };
+  
 
   useEffect(() => {
     if (!isPlayerTurn && !winner && !gameOver) {
@@ -209,19 +230,42 @@ export default function ComputerRoomPage() {
 
   return (
     <div className="flex flex-col items-center mt-20">
-      {gameOver ? (
-        <h1 className="text-2xl font-bold text-gray-700">
-          Game Over! All {totalRounds} rounds completed.
-        </h1>
-      ) : (
-        <>
-          <h1 className="text-2xl font-bold text-gray-700">
-            Round {currentRound} of {totalRounds}
-          </h1>
-          <Board grid={grid} onCellClick={handlePlayerMove} />
-          {winner && <p>{winner === "Tie" ? "It's a Tie!" : `Winner: ${winner}`}</p>}
-        </>
-      )}
+     {gameOver ? (
+  <div className="flex flex-col items-center">
+    <h1 className="text-2xl font-bold text-gray-700">
+      Game Over! All {totalRounds} rounds completed.
+    </h1>
+    <p className="text-lg">
+      Player Wins: {playerScore} | Computer Wins: {computerScore} | Ties: {tieScore}
+    </p>
+
+    <div className="flex justify-between items-center gap-2">
+    <button
+      onClick={() => {
+        setCurrentRound(1);
+        setGameOver(false);
+        resetGame();
+        setPlayerScore(0);
+        setComputerScore(0);
+        setTieScore(0);
+      }}
+      className="mt-4 px-4 py-1 bg-gray-700 hover:bg-gray-500 text-white"
+    >
+      Restart
+    </button>
+    <Link href="/"  className="mt-4 px-4 py-1 bg-gray-700 hover:bg-gray-500 text-white">Home</Link>
+    </div>
+  </div>
+) : (
+  <>
+    <h1 className="text-2xl font-bold text-gray-700">
+      Round {currentRound} of {totalRounds}
+    </h1>
+    <Board grid={grid} onCellClick={handlePlayerMove} />
+    {winner && <p>{winner === "Tie" ? "It's a Tie!" : `Winner: ${winner}`}</p>}
+  </>
+)}
+
     </div>
   );
 }
