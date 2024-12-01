@@ -9,7 +9,7 @@ export default function ComputerRoomPage() {
   const searchParams = useSearchParams();
   const difficulty = searchParams.get("difficulty") || "Easy";
   const playerSymbol = searchParams.get("symbol") || "X";
-const computerSymbol = playerSymbol === "X" ? "O" : "X";
+  const computerSymbol = playerSymbol === "X" ? "O" : "X";
 
   const totalRounds = parseInt(searchParams.get("gameRound") || "1", 10);
   const firstTurn =
@@ -60,10 +60,9 @@ const computerSymbol = playerSymbol === "X" ? "O" : "X";
     setComputerMoves([]);
     setWinner(null);
     setIsPlayerTurn(
-      firstTurn === "player" && currentRound % 2 === 1 ||
-      firstTurn === "computer" && currentRound % 2 === 0
+      (firstTurn === "player" && currentRound % 2 === 1) ||
+        (firstTurn === "computer" && currentRound % 2 === 0)
     );
-    
   };
 
   useEffect(() => {
@@ -111,6 +110,14 @@ const computerSymbol = playerSymbol === "X" ? "O" : "X";
   };
 
   const getComputerMove = (grid) => {
+    // If the grid is empty, we choose a random first move
+    if (grid.every((cell) => cell === null)) {
+      const availableSpots = grid
+        .map((value, index) => (value === null ? index : null))
+        .filter((index) => index !== null);
+      return availableSpots[Math.floor(Math.random() * availableSpots.length)]; // Random first move
+    }
+
     if (difficulty === "Easy") {
       const blockMove = findWinningMove(grid, playerSymbol);
       if (blockMove !== null) return blockMove;
@@ -122,20 +129,11 @@ const computerSymbol = playerSymbol === "X" ? "O" : "X";
     }
 
     if (difficulty === "Medium") {
-      const winningMove = findWinningMove(grid, computerSymbol);
-      if (winningMove !== null) return winningMove;
-
-      const blockMove = findWinningMove(grid, playerSymbol);
-      if (blockMove !== null) return blockMove;
-
-      const availableSpots = grid
-        .map((value, index) => (value === null ? index : null))
-        .filter((index) => index !== null);
-      return availableSpots[Math.floor(Math.random() * availableSpots.length)];
+      return minimax(grid, computerSymbol).index;
     }
 
     if (difficulty === "Hard") {
-      return minimax(grid, computerSymbol).index;
+      return alphaBeta(grid, 0, -Infinity, Infinity, true).index;
     }
 
     return null;
@@ -170,28 +168,27 @@ const computerSymbol = playerSymbol === "X" ? "O" : "X";
       .map((value, index) => (value === null ? index : null))
       .filter((index) => index !== null);
 
-    const result = checkWinner(grid);
-    if (result === playerSymbol) return { score: -10 + depth }; // Penalize deep wins for the opponent
-    if (result === computerSymbol) return { score: 10 - depth }; // Reward faster wins for the computer
+    const result = checkWinner(grid); // Check if the game is over
+    if (result === playerSymbol) return { score: -10 + depth }; // Opponent win (penalize longer games)
+    if (result === computerSymbol) return { score: 10 - depth }; // Computer win (reward faster wins)
     if (availableSpots.length === 0) return { score: 0 }; // Tie
 
     const moves = [];
     for (let i = 0; i < availableSpots.length; i++) {
       const move = {};
       move.index = availableSpots[i];
-      grid[availableSpots[i]] = player;
+      grid[availableSpots[i]] = player; // Make the move
 
-      // Recursive call with incremented depth
-      move.score =
-        player === computerSymbol
-          ? minimax(grid, playerSymbol, depth + 1).score
-          : minimax(grid, computerSymbol, depth + 1).score;
+      // Recursive call based on the player
+      const nextPlayer =
+        player === computerSymbol ? playerSymbol : computerSymbol;
+      const result = minimax(grid, nextPlayer, depth + 1); // Recursively calculate the score for the next player
+      move.score = result.score;
 
-      grid[availableSpots[i]] = null; // Undo move
+      grid[availableSpots[i]] = null; // Undo the move
       moves.push(move);
     }
 
-    // Choose the best move based on maximizing/minimizing
     let bestMove;
     if (player === computerSymbol) {
       let bestScore = -Infinity;
@@ -212,6 +209,49 @@ const computerSymbol = playerSymbol === "X" ? "O" : "X";
     }
 
     return bestMove;
+  };
+
+  // Alpha-Beta Pruning implementation
+  const alphaBeta = (grid, depth, alpha, beta, isMaximizing) => {
+    const availableSpots = grid
+      .map((value, index) => (value === null ? index : null))
+      .filter((index) => index !== null);
+
+    const result = checkWinner(grid);
+    if (result === computerSymbol) return { score: 10 - depth };
+    if (result === playerSymbol) return { score: -10 + depth };
+    if (availableSpots.length === 0) return { score: 0 };
+
+    let bestMove = {};
+    if (isMaximizing) {
+      let maxEval = -Infinity;
+      for (const spot of availableSpots) {
+        grid[spot] = computerSymbol;
+        const evalResult = alphaBeta(grid, depth + 1, alpha, beta, false);
+        grid[spot] = null;
+        if (evalResult.score > maxEval) {
+          maxEval = evalResult.score;
+          bestMove = { index: spot, score: maxEval };
+        }
+        alpha = Math.max(alpha, maxEval);
+        if (beta <= alpha) break; // Beta cut-off
+      }
+      return bestMove;
+    } else {
+      let minEval = Infinity;
+      for (const spot of availableSpots) {
+        grid[spot] = playerSymbol;
+        const evalResult = alphaBeta(grid, depth + 1, alpha, beta, true);
+        grid[spot] = null;
+        if (evalResult.score < minEval) {
+          minEval = evalResult.score;
+          bestMove = { index: spot, score: minEval };
+        }
+        beta = Math.min(beta, minEval);
+        if (beta <= alpha) break; // Alpha cut-off
+      }
+      return bestMove;
+    }
   };
 
   useEffect(() => {
