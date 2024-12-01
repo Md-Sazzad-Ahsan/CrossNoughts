@@ -20,80 +20,114 @@ export default function CreateRoom() {
   };
 
   return (
-    <div className="max-w-3xl sm:mx-auto mt-5 md:mt-20 px-3 py-5">
-      <section className="bg-white md:shadow-sm md:px-10 py-10 md:py-5 md:border border-gray-200 rounded-md">
-        <h1 className="text-4xl text-center pb-8 font-extrabold text-gray-800">
+    <div className="max-w-3xl sm:mx-auto mt-5 md:mt-20 p-5">
+      <section className="bg-white md:shadow-sm md:px-5 py-10 md:py-5 md:border border-gray-200 rounded-md">
+        <h1 className="text-4xl text-center pb-8 md:py-8 font-extrabold text-gray-800">
           CrossNoughts
         </h1>
         <form className="space-y-6">
 
           {/* Rounds */}
           <div>
-            <label
-              htmlFor="gameRound"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Round
+            <label className="block text-sm font-bold text-gray-700 mb-1">
+              Game Over after
             </label>
-            <select
-              id="gameRound"
-              value={gameRound}
-              onChange={(e) => setGameRound(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm"
-            >
-              <option value="">Random</option>
+            <div className="mt-1 grid grid-cols-4 space-x-2 text-center">
               {["3 Round", "5 Round", "7 Round"].map((round) => (
-                <option key={round} value={round}>
+                <button
+                  key={round}
+                  type="button"
+                  onClick={() => setGameRound(round)}
+                  className={`col-span-1 py-3 text-xs md:text-sm font-medium text-center rounded-md shadow-sm ${
+                    gameRound === round
+                      ? "bg-gray-700 text-white"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                >
                   {round}
-                </option>
+                </button>
               ))}
-            </select>
+              <button
+                type="button"
+                onClick={() => setGameRound("")}
+                className={`col-span-1 px-2 py-3 text-xs md:text-sm font-medium rounded-md shadow-sm ${
+                  gameRound === ""
+                    ? "bg-gray-700 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                Random
+              </button>
+            </div>
           </div>
+
 
           {/* First Turn */}
           <div>
-            <label
-              htmlFor="turn"
-              className="block text-sm font-medium text-gray-700"
-            >
-              First Turn
+            <label className="block text-sm font-bold mb-1 text-gray-700">
+              First Move
             </label>
-            <select
-              id="turn"
-              value={turn}
-              onChange={(e) => setTurn(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm"
-            >
-              <option value="">Random</option>
-              {["I play first", "Opponent First"].map((option) => (
-                <option key={option} value={option}>
+            <div className="mt-1 flex justify-start text-center space-x-2">
+              {["I play first", "Opponent first"].map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => setTurn(option)}
+                  className={`flex-grow px-2 py-3 text-xs md:text-sm font-medium text-center rounded-md shadow-sm ${
+                    turn === option
+                      ? "bg-gray-700 text-white"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                >
                   {option}
-                </option>
+                </button>
               ))}
-            </select>
+              <button
+                type="button"
+                onClick={() => setTurn("")}
+                className={`px-4 py-3 text-xs md:text-sm font-medium text-center rounded-md shadow-sm ${
+                  turn === ""
+                    ? "bg-gray-700 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                Random
+              </button>
+            </div>
           </div>
 
           {/* Symbol Selection */}
           <div>
-            <label
-              htmlFor="symbol"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Select Symbol
+            <label className="block text-sm font-bold mb-1 text-gray-700">
+              Your Symbol
             </label>
-            <select
-              id="symbol"
-              value={symbol}
-              onChange={(e) => setSymbol(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm"
-            >
-              <option value="">Random</option>
+            <div className="mt-1 flex space-x-2">
               {["X", "O"].map((sym) => (
-                <option key={sym} value={sym}>
+                <button
+                  key={sym}
+                  type="button"
+                  onClick={() => setSymbol(sym)}
+                  className={`flex-grow px-4 py-3 text-xs md:text-sm font-medium text-center rounded-md shadow-sm ${
+                    symbol === sym
+                      ? "bg-gray-700 text-white"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                >
                   {sym}
-                </option>
+                </button>
               ))}
-            </select>
+              <button
+                type="button"
+                onClick={() => setSymbol("")}
+                className={`px-4 py-3 text-xs md:text-sm font-medium text-center rounded-md shadow-sm ${
+                  symbol === ""
+                    ? "bg-gray-700 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                Random
+              </button>
+            </div>
           </div>
 
           {/* Submit Button */}
@@ -101,7 +135,7 @@ export default function CreateRoom() {
             <button
               type="button"
               onClick={handleCreateRoom}
-              className="inline-flex justify-center items-center w-full md:w-auto px-10 py-2 mt-4 text-white font-medium bg-gray-800 hover:bg-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              className="inline-flex justify-center items-center w-full px-10 py-3 mt-4 text-white font-medium bg-gray-800 hover:bg-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
             >
               Create Room
             </button>

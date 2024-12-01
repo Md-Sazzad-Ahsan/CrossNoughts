@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import React, { useState } from "react";
+import { FaRegWindowClose } from "react-icons/fa";
 import CreateRoom from "@/components/Modals/CreateRoom";
 import JoinRoom from "@/components/Modals/JoinRoom";
 import PlayRoom from "@/components/Modals/PlayRoom";
@@ -48,13 +49,13 @@ export default function HomePage() {
 
       {/* Modal */}
       {modalType && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-5 max-w-lg w-full relative mx-5">
+        <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-5 max-w-lg w-full relative mx-3">
             <button
               onClick={closeModal}
-              className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
+              className="absolute top-4 right-4 text-3xl text-gray-700 hover:text-gray-600"
             >
-              &#10005; {/* Close icon */}
+            <FaRegWindowClose />
             </button>
             {modalType === "create" && <CreateRoom />}
             {modalType === "join" && <JoinRoom />}

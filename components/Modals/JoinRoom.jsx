@@ -31,7 +31,7 @@ export default function CreateRoom() {
           <div className="text-center mt-2">
             <button
               type="button"
-              className="inline-flex justify-center items-center w-full md:w-auto px-10 py-3 text-white font-medium bg-gray-800 hover:bg-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              className="inline-flex justify-center items-center w-full px-10 py-3 text-white font-medium bg-gray-800 hover:bg-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
             >
               Join Room
             </button>
