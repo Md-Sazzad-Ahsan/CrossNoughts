@@ -14,7 +14,7 @@ const WinnerLoserModal = ({ player, computer, onRestart, onHome }) => {
         <h2 className="text-4xl font-bold my-12">Game Over!</h2>
 
         {/* Winner Section */}
-        <div className="mb-4 border border-gray-200 p-3 rounded-lg shadow-lg">
+        <div className="mb-4 mx-3 border border-gray-200 p-3 rounded-lg shadow-sm">
           <div className="flex items-center justify-between">
             {/* Winner Avatar */}
             <div className="flex items-center gap-4">
@@ -36,7 +36,7 @@ const WinnerLoserModal = ({ player, computer, onRestart, onHome }) => {
         </div>
 
         {/* Loser Section */}
-        <div className="border border-gray-200 p-3 rounded-lg shadow-sm bg-gray-50">
+        <div className="mx-3 border border-gray-200 p-3 rounded-lg shadow-sm bg-gray-50">
           <div className="flex items-center justify-between">
             {/* Loser Avatar */}
             <div className="flex items-center gap-4">
