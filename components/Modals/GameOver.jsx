@@ -58,7 +58,7 @@ const WinnerLoserModal = ({ player, computer, onRestart, onHome }) => {
         </div>
 
         {/* Buttons */}
-        <div className="grid grid-cols-2 items-center text-center gap-2 mt-12 mb-8">
+        <div className="grid grid-cols-2 items-center text-center gap-2 mt-12 mb-8 mx-3">
           <button
             onClick={onRestart}
             className="col-span-1 px-4 py-2 bg-gray-800 text-white font-semibold rounded hover:bg-gray-500 transition"
