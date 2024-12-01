@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation"; // To get query params if needed
 import Board from "@/components/BoardDesign/Board";
+import GameOver from "@/components/Modals/GameOver"
 import Link from "next/link";
 
 export default function ComputerRoomPage() {
@@ -95,11 +96,12 @@ export default function ComputerRoomPage() {
 
     const newGrid = [...grid];
 
-    if (playerMoves.length === 3) {
+    if (playerMoves.length >= 3) {
       const oldestMove = playerMoves[0];
       newGrid[oldestMove] = null;
-      setPlayerMoves((prev) => prev.slice(1));
+      setPlayerMoves((prev) => prev.slice(1));  // Remove the first move after the 4th move
     }
+    
 
     newGrid[index] = playerSymbol;
     setPlayerMoves((prev) => [...prev, index]);
@@ -262,7 +264,7 @@ export default function ComputerRoomPage() {
         setTimeout(() => {
           const newGrid = [...grid];
 
-          if (computerMoves.length === 3) {
+          if (computerMoves.length >= 3) {
             const oldestMove = computerMoves[0];
             newGrid[oldestMove] = null;
             setComputerMoves((prev) => prev.slice(1));
@@ -282,53 +284,38 @@ export default function ComputerRoomPage() {
 
   return (
     <div className="flex flex-col items-center mt-20">
-      {gameOver ? (
-        <div className="flex flex-col items-center">
-          <h1 className="text-2xl font-bold text-gray-700 text-center mt-40 uppercase">
-            Game Over! <br /> All {totalRounds} rounds completed
-          </h1>
-          <p className="text-lg">
-            Player Wins: {playerScore} | Computer Wins: {computerScore} | Ties:{" "}
-            {tieScore}
-          </p>
+    {gameOver ? (
+ <GameOver
+ player={{ name: "You", avatar: "/images/profileImage.jpg", score: playerScore }}
+ computer={{ name: "Computer", avatar: "/images/profileImage.jpg", score: computerScore }}
+ onRestart={() => {
+   setCurrentRound(1);
+   setGameOver(false);
+   resetGame();
+   setPlayerScore(0);
+   setComputerScore(0);
+   setTieScore(0);
+   setIsPlayerTurn(firstTurn === "player");
+ }}
+ onHome={() => {
+   window.location.href = "/";
+ }}
+/>
 
-          <div className="flex justify-between items-center gap-2">
-            <button
-              onClick={() => {
-                setCurrentRound(1);
-                setGameOver(false);
-                resetGame();
-                setPlayerScore(0);
-                setComputerScore(0);
-                setTieScore(0);
-                // Reapply firstTurn for the first round
-                setIsPlayerTurn(firstTurn === "player");
-              }}
-              className="mt-4 px-4 py-1 bg-gray-700 hover:bg-gray-500 text-white"
-            >
-              Restart
-            </button>
-            <Link
-              href="/"
-              className="mt-4 px-4 py-1 bg-gray-700 hover:bg-gray-500 text-white"
-            >
-              Home
-            </Link>
-          </div>
-        </div>
-      ) : (
-        <div className="mt-20 md:mt-32">
-          <h1 className="text-2xl font-bold text-gray-700 text-center pb-5 uppercase">
-            Round {currentRound} of {totalRounds}
-          </h1>
-          <Board grid={grid} onCellClick={handlePlayerMove} />
-          {winner && (
-            <p className="pt-5 uppercase text-center font-bold">
-              {winner === "Tie" ? "It's a Tie!" : `Winner: ${winner}`}
-            </p>
-          )}
-        </div>
-      )}
+) : (
+  <div className="mt-20 md:mt-32">
+    <h1 className="text-2xl font-bold text-gray-700 text-center pb-5 uppercase">
+      Round {currentRound} of {totalRounds}
+    </h1>
+    <Board grid={grid} onCellClick={handlePlayerMove} />
+    {winner && (
+      <p className="pt-5 uppercase text-center font-bold">
+        {winner === "Tie" ? "It's a Tie!" : `Winner: ${winner}`}
+      </p>
+    )}
+  </div>
+)}
+
     </div>
   );
 }
