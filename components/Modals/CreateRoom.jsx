@@ -20,8 +20,8 @@ export default function CreateRoom() {
   };
 
   return (
-    <div className="max-w-3xl sm:mx-auto mt-20 px-3 py-5">
-      <section className="bg-white shadow-md px-5 md:px-10 py-10 border border-gray-200 rounded-md">
+    <div className="max-w-3xl sm:mx-auto mt-5 md:mt-20 px-3 py-5">
+      <section className="bg-white md:shadow-sm md:px-10 py-10 md:py-5 md:border border-gray-200 rounded-md">
         <h1 className="text-4xl text-center pb-8 font-extrabold text-gray-800">
           CrossNoughts
         </h1>
@@ -101,7 +101,7 @@ export default function CreateRoom() {
             <button
               type="button"
               onClick={handleCreateRoom}
-              className="inline-flex justify-center items-center w-full md:w-auto px-10 py-2 text-white font-medium bg-gray-800 hover:bg-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              className="inline-flex justify-center items-center w-full md:w-auto px-10 py-2 mt-4 text-white font-medium bg-gray-800 hover:bg-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
             >
               Create Room
             </button>

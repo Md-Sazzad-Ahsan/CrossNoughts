@@ -8,13 +8,15 @@ import Link from "next/link";
 export default function ComputerRoomPage() {
   const searchParams = useSearchParams();
   const difficulty = searchParams.get("difficulty") || "Easy";
-  const playerSymbol = searchParams.get("playerSymbol") || "X";
-  const computerSymbol = playerSymbol === "X" ? "O" : "X";
+  const playerSymbol = searchParams.get("symbol") || "X";
+const computerSymbol = playerSymbol === "X" ? "O" : "X";
+
   const totalRounds = parseInt(searchParams.get("gameRound") || "1", 10);
-  const firstTurn = searchParams.get("firstTurn") === "computer" ? "computer" : "player";
+  const firstTurn =
+    searchParams.get("turn") === "Computer play first" ? "computer" : "player";
 
   const [grid, setGrid] = useState(Array(9).fill(null));
-  const [isPlayerTurn, setIsPlayerTurn] = useState(firstTurn === "player");
+  // const [isPlayerTurn, setIsPlayerTurn] = useState(firstTurn === "player");
   const [winner, setWinner] = useState(null);
   const [playerMoves, setPlayerMoves] = useState([]);
   const [computerMoves, setComputerMoves] = useState([]);
@@ -22,9 +24,14 @@ export default function ComputerRoomPage() {
   const [gameOver, setGameOver] = useState(false); // Track if all rounds are complete
 
   const [playerScore, setPlayerScore] = useState(0);
-const [computerScore, setComputerScore] = useState(0);
-const [tieScore, setTieScore] = useState(0);
+  const [computerScore, setComputerScore] = useState(0);
+  const [tieScore, setTieScore] = useState(0);
 
+  // Initialize isPlayerTurn based on the firstTurn parameter and currentRound
+  const [isPlayerTurn, setIsPlayerTurn] = useState(
+    (firstTurn === "player" && currentRound % 2 === 1) ||
+      (firstTurn === "computer" && currentRound % 2 === 0)
+  );
 
   const checkWinner = (grid) => {
     const winningPatterns = [
@@ -52,7 +59,11 @@ const [tieScore, setTieScore] = useState(0);
     setPlayerMoves([]);
     setComputerMoves([]);
     setWinner(null);
-    setIsPlayerTurn(firstTurn === "player" || currentRound % 2 === 0);
+    setIsPlayerTurn(
+      firstTurn === "player" && currentRound % 2 === 1 ||
+      firstTurn === "computer" && currentRound % 2 === 0
+    );
+    
   };
 
   useEffect(() => {
@@ -65,7 +76,7 @@ const [tieScore, setTieScore] = useState(0);
       } else if (winner === "Tie") {
         setTieScore((prev) => prev + 1);
       }
-  
+
       if (currentRound < totalRounds) {
         setTimeout(() => {
           setCurrentRound((prev) => prev + 1);
@@ -77,9 +88,8 @@ const [tieScore, setTieScore] = useState(0);
         }, 3000); // 3-second delay before showing Game Over
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [winner, currentRound, totalRounds]);
-  
 
   const handlePlayerMove = (index) => {
     if (grid[index] || winner || !isPlayerTurn) return;
@@ -145,9 +155,12 @@ const [tieScore, setTieScore] = useState(0);
 
     for (let pattern of winningPatterns) {
       const [a, b, c] = pattern;
-      if (grid[a] === symbol && grid[b] === symbol && grid[c] === null) return c;
-      if (grid[a] === symbol && grid[c] === symbol && grid[b] === null) return b;
-      if (grid[b] === symbol && grid[c] === symbol && grid[a] === null) return a;
+      if (grid[a] === symbol && grid[b] === symbol && grid[c] === null)
+        return c;
+      if (grid[a] === symbol && grid[c] === symbol && grid[b] === null)
+        return b;
+      if (grid[b] === symbol && grid[c] === symbol && grid[a] === null)
+        return a;
     }
     return null;
   };
@@ -156,28 +169,28 @@ const [tieScore, setTieScore] = useState(0);
     const availableSpots = grid
       .map((value, index) => (value === null ? index : null))
       .filter((index) => index !== null);
-  
+
     const result = checkWinner(grid);
     if (result === playerSymbol) return { score: -10 + depth }; // Penalize deep wins for the opponent
     if (result === computerSymbol) return { score: 10 - depth }; // Reward faster wins for the computer
     if (availableSpots.length === 0) return { score: 0 }; // Tie
-  
+
     const moves = [];
     for (let i = 0; i < availableSpots.length; i++) {
       const move = {};
       move.index = availableSpots[i];
       grid[availableSpots[i]] = player;
-  
+
       // Recursive call with incremented depth
       move.score =
         player === computerSymbol
           ? minimax(grid, playerSymbol, depth + 1).score
           : minimax(grid, computerSymbol, depth + 1).score;
-  
+
       grid[availableSpots[i]] = null; // Undo move
       moves.push(move);
     }
-  
+
     // Choose the best move based on maximizing/minimizing
     let bestMove;
     if (player === computerSymbol) {
@@ -197,10 +210,9 @@ const [tieScore, setTieScore] = useState(0);
         }
       }
     }
-  
+
     return bestMove;
   };
-  
 
   useEffect(() => {
     if (!isPlayerTurn && !winner && !gameOver) {
@@ -230,42 +242,53 @@ const [tieScore, setTieScore] = useState(0);
 
   return (
     <div className="flex flex-col items-center mt-20">
-     {gameOver ? (
-  <div className="flex flex-col items-center">
-    <h1 className="text-2xl font-bold text-gray-700">
-      Game Over! All {totalRounds} rounds completed.
-    </h1>
-    <p className="text-lg">
-      Player Wins: {playerScore} | Computer Wins: {computerScore} | Ties: {tieScore}
-    </p>
+      {gameOver ? (
+        <div className="flex flex-col items-center">
+          <h1 className="text-2xl font-bold text-gray-700 text-center mt-40 uppercase">
+            Game Over! <br /> All {totalRounds} rounds completed
+          </h1>
+          <p className="text-lg">
+            Player Wins: {playerScore} | Computer Wins: {computerScore} | Ties:{" "}
+            {tieScore}
+          </p>
 
-    <div className="flex justify-between items-center gap-2">
-    <button
-      onClick={() => {
-        setCurrentRound(1);
-        setGameOver(false);
-        resetGame();
-        setPlayerScore(0);
-        setComputerScore(0);
-        setTieScore(0);
-      }}
-      className="mt-4 px-4 py-1 bg-gray-700 hover:bg-gray-500 text-white"
-    >
-      Restart
-    </button>
-    <Link href="/"  className="mt-4 px-4 py-1 bg-gray-700 hover:bg-gray-500 text-white">Home</Link>
-    </div>
-  </div>
-) : (
-  <>
-    <h1 className="text-2xl font-bold text-gray-700">
-      Round {currentRound} of {totalRounds}
-    </h1>
-    <Board grid={grid} onCellClick={handlePlayerMove} />
-    {winner && <p>{winner === "Tie" ? "It's a Tie!" : `Winner: ${winner}`}</p>}
-  </>
-)}
-
+          <div className="flex justify-between items-center gap-2">
+            <button
+              onClick={() => {
+                setCurrentRound(1);
+                setGameOver(false);
+                resetGame();
+                setPlayerScore(0);
+                setComputerScore(0);
+                setTieScore(0);
+                // Reapply firstTurn for the first round
+                setIsPlayerTurn(firstTurn === "player");
+              }}
+              className="mt-4 px-4 py-1 bg-gray-700 hover:bg-gray-500 text-white"
+            >
+              Restart
+            </button>
+            <Link
+              href="/"
+              className="mt-4 px-4 py-1 bg-gray-700 hover:bg-gray-500 text-white"
+            >
+              Home
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <div className="mt-20 md:mt-32">
+          <h1 className="text-2xl font-bold text-gray-700 text-center pb-5 uppercase">
+            Round {currentRound} of {totalRounds}
+          </h1>
+          <Board grid={grid} onCellClick={handlePlayerMove} />
+          {winner && (
+            <p className="pt-5 uppercase text-center font-bold">
+              {winner === "Tie" ? "It's a Tie!" : `Winner: ${winner}`}
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

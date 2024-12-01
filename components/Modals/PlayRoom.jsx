@@ -47,8 +47,8 @@ export default function CreateRoom() {
   };
 
   return (
-    <div className="max-w-3xl sm:mx-auto mt-16 px-3 py-5">
-      <section className="bg-white shadow-md px-5 md:px-10 py-10 border border-gray-200 rounded-md">
+    <div className="max-w-3xl sm:mx-auto py-5">
+      <section className="bg-white md:shadow-sm md:px-10 py-10 md:mt-5 md:border border-gray-200 rounded-md">
         <h1 className="text-4xl text-center pb-8 font-extrabold text-gray-800">
           CrossNoughts
         </h1>
@@ -65,7 +65,7 @@ export default function CreateRoom() {
               htmlFor="gameRound"
               className="block text-sm font-medium text-gray-700"
             >
-              Round
+              Game Round
             </label>
             <select
               id="gameRound"
@@ -88,7 +88,7 @@ export default function CreateRoom() {
               htmlFor="turn"
               className="block text-sm font-medium text-gray-700"
             >
-              First Turn
+              First Move
             </label>
             <select
               id="turn"
@@ -111,7 +111,7 @@ export default function CreateRoom() {
               htmlFor="symbol"
               className="block text-sm font-medium text-gray-700"
             >
-              Select Symbol
+              Your Symbol
             </label>
             <select
               id="symbol"
@@ -152,10 +152,10 @@ export default function CreateRoom() {
           </div>
 
           {/* Submit Button */}
-          <div className="text-center mt-5">
+          <div className="text-center">
             <button
               type="submit"
-              className="inline-flex justify-center items-center w-full md:w-auto px-10 py-2 text-white font-medium bg-gray-800 hover:bg-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              className="inline-flex justify-center items-center w-full md:w-auto px-10 py-2 mt-5 text-white font-medium bg-gray-800 hover:bg-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
             >
               Play
             </button>

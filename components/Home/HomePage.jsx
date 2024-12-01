@@ -12,34 +12,34 @@ export default function HomePage() {
   const closeModal = () => setModalType(null);
 
   return (
-    <div className="max-w-3xl mx-auto my-20 px-5">
-      <section className="px-5 border border-gray-300 rounded-md">
-        <h1 className="text-5xl text-center py-10 font-bold">CrossNoughts</h1>
-        <div className="px-5 md:px-10">
+    <div className="max-w-3xl mx-auto mt-40 mb-20 md:my-20 sm:px-5">
+      <section className="px-5 md:border border-gray-200 rounded-md md:shadow-sm">
+        <h1 className="text-5xl md:text-6xl text-center sm:py-10 md:pt-10 font-bold">CrossNoughts</h1>
+        <div className="md:px-10">
           <Image
             src="/images/CrossNoughts.jpg"
             alt="CrossNoughts Image"
-            height={500}
-            width={500}
+            height={800}
+            width={800}
             className="object-cover mx-auto"
           />
         </div>
-        <div className="grid grid-cols-2 gap-2 text-sm md:text-md text-gray-100 mx-5 md:mx-20 mb-10">
+        <div className="grid grid-cols-2 gap-2 text-sm md:text-md text-gray-100 mx-5 md:mx-20 mb-10 mt-10 md:mt-0">
           <button
             onClick={() => openModal("create")}
-            className="col-span-1 bg-gray-800 hover:bg-gray-600 py-2 md:py-3"
+            className="col-span-1 bg-gray-800 hover:bg-gray-600 py-3"
           >
             Create Room
           </button>
           <button
             onClick={() => openModal("join")}
-            className="col-span-1 bg-gray-800 hover:bg-gray-600 py-2 md:py-3"
+            className="col-span-1 bg-gray-800 hover:bg-gray-600 py-3"
           >
             Join a Room
           </button>
           <button
             onClick={() => openModal("play")}
-            className="col-span-2 bg-gray-800 hover:bg-gray-600 py-2 md:py-3"
+            className="col-span-2 bg-gray-800 hover:bg-gray-600 py-3"
           >
             Play with Computer
           </button>
