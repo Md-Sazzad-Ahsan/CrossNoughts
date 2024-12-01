@@ -1,16 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
-import { useParams } from "next/navigation";
+import React, { useState, useEffect } from "react";
+import { useParams, useSearchParams } from "next/navigation";
 import Board from "@/components/BoardDesign/Board";
 
 export default function RoomPage() {
   const { roomCode } = useParams();
+  const searchParams = useSearchParams();
+
+  const gameRound = searchParams.get("gameRound") || "Random";
+  const turn = searchParams.get("turn") || "Random";
+  const symbol = searchParams.get("symbol") || "Random";
+
   const [grid, setGrid] = useState(Array(9).fill(null));
-  const [isXTurn, setIsXTurn] = useState(true);
+  const [isHostTurn, setIsHostTurn] = useState(turn === "I play first");
+  const [hostSymbol, setHostSymbol] = useState(symbol === "Random" ? "X" : symbol);
+  const [opponentSymbol, setOpponentSymbol] = useState(
+    hostSymbol === "X" ? "O" : "X"
+  );
+  const [hostMoves, setHostMoves] = useState([]);
+  const [opponentMoves, setOpponentMoves] = useState([]);
   const [winner, setWinner] = useState(null);
-  const [xMoves, setXMoves] = useState([]);
-  const [oMoves, setOMoves] = useState([]);
 
   const checkWinner = (grid) => {
     const winningPatterns = [
@@ -37,32 +47,49 @@ export default function RoomPage() {
     if (grid[index] || winner) return;
 
     const newGrid = [...grid];
-    const currentSymbol = isXTurn ? "X" : "O";
+    const currentSymbol = isHostTurn ? hostSymbol : opponentSymbol;
+    const currentMoves = isHostTurn ? hostMoves : opponentMoves;
 
-    if (isXTurn) {
-      if (xMoves.length >= 3) {
-        newGrid[xMoves[0]] = null;
-        setXMoves(xMoves.slice(1));
-      }
-      setXMoves([...xMoves, index]);
-    } else {
-      if (oMoves.length >= 3) {
-        newGrid[oMoves[0]] = null;
-        setOMoves(oMoves.slice(1));
-      }
-      setOMoves([...oMoves, index]);
+    if (currentMoves.length >= 3) {
+      // Remove the oldest move
+      const [firstMove, ...remainingMoves] = currentMoves;
+      newGrid[firstMove] = null;
+      currentMoves.splice(0, 1);
     }
 
     newGrid[index] = currentSymbol;
+    currentMoves.push(index);
+
+    if (isHostTurn) {
+      setHostMoves([...currentMoves]);
+    } else {
+      setOpponentMoves([...currentMoves]);
+    }
+
     setGrid(newGrid);
     setWinner(checkWinner(newGrid));
-    setIsXTurn(!isXTurn);
+    setIsHostTurn(!isHostTurn);
   };
+
+  useEffect(() => {
+    // Ensure host and opponent symbols are correctly set based on URL params
+    if (symbol === "Random") {
+      const randomSymbol = Math.random() > 0.5 ? "X" : "O";
+      setHostSymbol(randomSymbol);
+      setOpponentSymbol(randomSymbol === "X" ? "O" : "X");
+    }
+    if (turn === "Random") {
+      setIsHostTurn(Math.random() > 0.5);
+    }
+  }, [symbol, turn]);
 
   return (
     <div className="flex flex-col items-center mt-20">
       <h1 className="text-2xl font-bold mb-4">Two-Player Mode</h1>
       <h2 className="text-lg text-gray-600 mb-4">Room Code: {roomCode}</h2>
+      <h3 className="text-sm text-gray-500 mb-4">
+        Game Round: {gameRound} | Turn: {turn} | Symbol: {symbol}
+      </h3>
       <Board grid={grid} onCellClick={handleMove} />
       {winner && (
         <p className="mt-4 text-lg font-semibold text-red-500">

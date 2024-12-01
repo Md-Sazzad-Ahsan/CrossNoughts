@@ -46,8 +46,8 @@ const gameSchema = new Schema(
       },
       difficulty: {
         type: String,
-        enum: ['easy', 'medium', 'hard'], // Example difficulties
-        required: false, // Optional for human-only games
+        enum: ['easy', 'medium', 'hard'], 
+        required: false, 
       },
       status: {
         type: String,
@@ -56,7 +56,7 @@ const gameSchema = new Schema(
       },
       boardState: {
         type: [[String]], // 2D array for game board state
-        default: null, // Null means not started
+        default: null, 
       },
       playerOne: { type: playerSchema },
       playerTwo: { type: playerSchema },

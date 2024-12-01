@@ -9,13 +9,34 @@ export default function CreateRoom() {
 
   const router = useRouter();
 
+  // Utility functions for randomness
+  const getRandomGameRound = () => {
+    const rounds = ["3 Round", "5 Round", "7 Round"];
+    return rounds[Math.floor(Math.random() * rounds.length)];
+  };
+
+  const getRandomTurn = () => {
+    const options = ["I play first", "Opponent first"];
+    return options[Math.floor(Math.random() * options.length)];
+  };
+
+  const getRandomSymbol = () => {
+    const symbols = ["X", "O"];
+    return symbols[Math.floor(Math.random() * symbols.length)];
+  };
+
   const handleCreateRoom = () => {
     // Generate a random room code
     const roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-    const opponent = "player";
+
+    // Apply randomization if needed
+    const selectedGameRound = gameRound || getRandomGameRound();
+    const selectedTurn = turn || getRandomTurn();
+    const selectedSymbol = symbol || getRandomSymbol();
+
     // Navigate to the room page with query params
     router.push(
-      `/room/${roomCode}?gameRound=${gameRound}&turn=${turn}&symbol=${symbol}&opponent=${opponent}`
+      `/room/${roomCode}?gameRound=${selectedGameRound}&turn=${selectedTurn}&symbol=${selectedSymbol}`
     );
   };
 
@@ -49,7 +70,7 @@ export default function CreateRoom() {
               ))}
               <button
                 type="button"
-                onClick={() => setGameRound("")}
+                onClick={() => setGameRound(getRandomGameRound())}
                 className={`col-span-1 px-2 py-3 text-xs md:text-sm font-medium rounded-md shadow-sm ${
                   gameRound === ""
                     ? "bg-gray-700 text-white"
@@ -60,7 +81,6 @@ export default function CreateRoom() {
               </button>
             </div>
           </div>
-
 
           {/* First Turn */}
           <div>
@@ -84,7 +104,7 @@ export default function CreateRoom() {
               ))}
               <button
                 type="button"
-                onClick={() => setTurn("")}
+                onClick={() => setTurn(getRandomTurn())}
                 className={`px-4 py-3 text-xs md:text-sm font-medium text-center rounded-md shadow-sm ${
                   turn === ""
                     ? "bg-gray-700 text-white"
@@ -118,7 +138,7 @@ export default function CreateRoom() {
               ))}
               <button
                 type="button"
-                onClick={() => setSymbol("")}
+                onClick={() => setSymbol(getRandomSymbol())}
                 className={`px-4 py-3 text-xs md:text-sm font-medium text-center rounded-md shadow-sm ${
                   symbol === ""
                     ? "bg-gray-700 text-white"

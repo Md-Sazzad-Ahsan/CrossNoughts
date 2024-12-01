@@ -1,3 +1,4 @@
+// /app/api/game/route.js
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import Game from "@/models/Game";
