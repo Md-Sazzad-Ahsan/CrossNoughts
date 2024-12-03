@@ -3,24 +3,32 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Board from "@/components/BoardDesign/Board";
+import GameOver from "@/components/Modals/GameOver";
+import PlayerInfo from "@/components/BoardDesign/PlayerInfo";
 
 export default function RoomPage() {
   const { roomCode } = useParams();
   const searchParams = useSearchParams();
 
-  const gameRound = searchParams.get("gameRound") || "Random";
-  const turn = searchParams.get("turn") || "Random";
-  const symbol = searchParams.get("symbol") || "Random";
+  const gameRound = parseInt(searchParams.get("gameRound")) || 1; // Total rounds
+  const turn = searchParams.get("turn");
+  const symbol = searchParams.get("symbol");
 
   const [grid, setGrid] = useState(Array(9).fill(null));
   const [isHostTurn, setIsHostTurn] = useState(turn === "I play first");
-  const [hostSymbol, setHostSymbol] = useState(symbol === "Random" ? "X" : symbol);
+  const [hostSymbol, setHostSymbol] = useState(symbol);
   const [opponentSymbol, setOpponentSymbol] = useState(
-    hostSymbol === "X" ? "O" : "X"
+    symbol === "X" ? "O" : "X"
   );
   const [hostMoves, setHostMoves] = useState([]);
   const [opponentMoves, setOpponentMoves] = useState([]);
   const [winner, setWinner] = useState(null);
+  const [roundCount, setRoundCount] = useState(1); // Current round
+  const [hostWins, setHostWins] = useState(0);
+  const [opponentWins, setOpponentWins] = useState(0);
+  const [tieCount, setTieCount] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
+  const [showRoundText, setShowRoundText] = useState(true);
 
   const checkWinner = (grid) => {
     const winningPatterns = [
@@ -67,34 +75,108 @@ export default function RoomPage() {
     }
 
     setGrid(newGrid);
-    setWinner(checkWinner(newGrid));
+
+    const result = checkWinner(newGrid);
+    setWinner(result);
+
+    if (result) {
+      if (result === hostSymbol) {
+        setHostWins(hostWins + 1);
+      } else if (result === opponentSymbol) {
+        setOpponentWins(opponentWins + 1);
+      } else if (result === "Tie") {
+        setTieCount(tieCount + 1);
+      }
+    }
+
     setIsHostTurn(!isHostTurn);
   };
 
-  useEffect(() => {
-    // Ensure host and opponent symbols are correctly set based on URL params
-    if (symbol === "Random") {
-      const randomSymbol = Math.random() > 0.5 ? "X" : "O";
-      setHostSymbol(randomSymbol);
-      setOpponentSymbol(randomSymbol === "X" ? "O" : "X");
-    }
-    if (turn === "Random") {
-      setIsHostTurn(Math.random() > 0.5);
-    }
-  }, [symbol, turn]);
+  const resetRound = () => {
+    setGrid(Array(9).fill(null));
+    setHostMoves([]);
+    setOpponentMoves([]);
+    setWinner(null);
+    setIsHostTurn(turn === "I play first");
+  };
 
+  const resetGame = () => {
+    setRoundCount(1);
+    setHostWins(0);
+    setOpponentWins(0);
+    setTieCount(0);
+    setGameOver(false);
+    resetRound();
+  };
+
+  useEffect(() => {
+    // Show the round text initially, then hide it after 2 seconds
+    setShowRoundText(true);
+    const timeout = setTimeout(() => {
+      setShowRoundText(false);
+    }, 2000);
+
+    // Cleanup the timeout on component unmount or before next effect runs
+    return () => clearTimeout(timeout);
+  }, [roundCount]); // Re-run this effect whenever the round count changes
+
+  useEffect(() => {
+    if (winner && roundCount < gameRound) {
+      setTimeout(() => {
+        resetRound();
+        setRoundCount(roundCount + 1);
+      }, 2000); // Delay before starting the next round
+    } else if (winner && roundCount === gameRound) {
+      setTimeout(() => {
+        setGameOver(true); // Delay before showing the game-over modal
+      }, 2000); // Adjust this delay as needed
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [winner]);
+
+  const player1 = "You";
+  const player2 = "Player 2";
+  const currentTurn = isHostTurn ? player1 : player2;
+  
   return (
     <div className="flex flex-col items-center mt-20">
-      <h1 className="text-2xl font-bold mb-4">Two-Player Mode</h1>
-      <h2 className="text-lg text-gray-600 mb-4">Room Code: {roomCode}</h2>
-      <h3 className="text-sm text-gray-500 mb-4">
-        Game Round: {gameRound} | Turn: {turn} | Symbol: {symbol}
-      </h3>
-      <Board grid={grid} onCellClick={handleMove} />
-      {winner && (
-        <p className="mt-4 text-lg font-semibold text-red-500">
-          {winner === "Tie" ? "It's a Tie!" : `Winner: ${winner}`}
-        </p>
+      {gameOver ? (
+        <GameOver
+          player={{
+            name: "You",
+            avatar: "/images/profileImage.jpg",
+            score: hostWins,
+          }}
+          computer={{
+            name: "Opponent",
+            avatar: "/images/profileImage.jpg",
+            score: opponentWins,
+          }}
+          onRestart={resetGame}
+          onHome={() => (window.location.href = "/")}
+        />
+      ) : (
+        <div className="mt-20">
+          <div className="mb-10">
+          <PlayerInfo
+            player1={player1}
+            player2={player2}
+            symbol={hostSymbol}
+            turn={currentTurn}
+          />
+          </div>
+          <Board grid={grid} onCellClick={handleMove} />
+          {showRoundText && (
+        <h1 className="text-sm font-bold text-gray-400 text-center py-5 uppercase">
+          Round {roundCount} of {gameRound}
+        </h1>
+      )}
+          {winner && (
+            <p className="pt-5 uppercase text-center font-bold">
+              {winner === "Tie" ? "It's a Tie!" : `Winner: ${winner}`}
+            </p>
+          )}
+        </div>
       )}
     </div>
   );

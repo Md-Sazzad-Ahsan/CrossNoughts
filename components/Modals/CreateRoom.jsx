@@ -3,40 +3,19 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function CreateRoom() {
-  const [gameRound, setGameRound] = useState("");
-  const [turn, setTurn] = useState("");
-  const [symbol, setSymbol] = useState("");
+  const [gameRound, setGameRound] = useState("1 Round"); // Default to the first option
+  const [turn, setTurn] = useState("I play first"); // Default to the first option
+  const [symbol, setSymbol] = useState("X"); // Default to the first option
 
   const router = useRouter();
-
-  // Utility functions for randomness
-  const getRandomGameRound = () => {
-    const rounds = ["3 Round", "5 Round", "7 Round"];
-    return rounds[Math.floor(Math.random() * rounds.length)];
-  };
-
-  const getRandomTurn = () => {
-    const options = ["I play first", "Opponent first"];
-    return options[Math.floor(Math.random() * options.length)];
-  };
-
-  const getRandomSymbol = () => {
-    const symbols = ["X", "O"];
-    return symbols[Math.floor(Math.random() * symbols.length)];
-  };
 
   const handleCreateRoom = () => {
     // Generate a random room code
     const roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
 
-    // Apply randomization if needed
-    const selectedGameRound = gameRound || getRandomGameRound();
-    const selectedTurn = turn || getRandomTurn();
-    const selectedSymbol = symbol || getRandomSymbol();
-
     // Navigate to the room page with query params
     router.push(
-      `/room/${roomCode}?gameRound=${selectedGameRound}&turn=${selectedTurn}&symbol=${selectedSymbol}`
+      `/room/${roomCode}?gameRound=${gameRound}&turn=${turn}&symbol=${symbol}`
     );
   };
 
@@ -54,7 +33,7 @@ export default function CreateRoom() {
               Game Over after
             </label>
             <div className="mt-1 grid grid-cols-4 space-x-2 text-center">
-              {["3 Round", "5 Round", "7 Round"].map((round) => (
+              {["1 Round", "3 Round", "5 Round", "7 Round"].map((round) => (
                 <button
                   key={round}
                   type="button"
@@ -68,17 +47,6 @@ export default function CreateRoom() {
                   {round}
                 </button>
               ))}
-              <button
-                type="button"
-                onClick={() => setGameRound(getRandomGameRound())}
-                className={`col-span-1 px-2 py-3 text-xs md:text-sm font-medium rounded-md shadow-sm ${
-                  gameRound === ""
-                    ? "bg-gray-700 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-              >
-                Random
-              </button>
             </div>
           </div>
 
@@ -102,17 +70,6 @@ export default function CreateRoom() {
                   {option}
                 </button>
               ))}
-              <button
-                type="button"
-                onClick={() => setTurn(getRandomTurn())}
-                className={`px-4 py-3 text-xs md:text-sm font-medium text-center rounded-md shadow-sm ${
-                  turn === ""
-                    ? "bg-gray-700 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-              >
-                Random
-              </button>
             </div>
           </div>
 
@@ -136,17 +93,6 @@ export default function CreateRoom() {
                   {sym}
                 </button>
               ))}
-              <button
-                type="button"
-                onClick={() => setSymbol(getRandomSymbol())}
-                className={`px-4 py-3 text-xs md:text-sm font-medium text-center rounded-md shadow-sm ${
-                  symbol === ""
-                    ? "bg-gray-700 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-              >
-                Random
-              </button>
             </div>
           </div>
 

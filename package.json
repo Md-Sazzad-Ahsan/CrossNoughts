@@ -9,10 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ducanh2912/next-pwa": "^10.2.9",
     "dotenv": "^16.4.5",
     "framer-motion": "^11.11.17",
     "mongoose": "^8.8.2",
     "next": "15.0.3",
+    "next-pwa": "^5.6.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^4.12.0"

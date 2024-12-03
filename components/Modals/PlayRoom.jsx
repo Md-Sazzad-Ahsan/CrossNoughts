@@ -4,10 +4,10 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function CreateRoom() {
-  const [gameRound, setGameRound] = useState("");
-  const [turn, setTurn] = useState("");
-  const [symbol, setSymbol] = useState("");
-  const [difficulty, setDifficulty] = useState("");
+  const [gameRound, setGameRound] = useState("1 Round"); // Default to the first option
+  const [turn, setTurn] = useState("I play first"); // Default to the first option
+  const [symbol, setSymbol] = useState("X"); // Default to the first option
+  const [difficulty, setDifficulty] = useState("Easy"); // Default to the first option
 
   const router = useRouter();
 
@@ -17,25 +17,10 @@ export default function CreateRoom() {
 
   const handlePlay = () => {
     const roomCode = generateRoomCode();
-    // Generate random values for selections if "Random" is chosen
-    const selectedGameRound =
-      gameRound === ""
-        ? ["3 Round", "5 Round", "7 Round"][Math.floor(Math.random() * 3)]
-        : gameRound;
-
-    const selectedTurn =
-      turn === ""
-        ? ["I play first", "Computer play first"][Math.floor(Math.random() * 2)]
-        : turn;
-
-    const selectedSymbol =
-      symbol === "" ? ["X", "O"][Math.floor(Math.random() * 2)] : symbol;
-
-    const selectedDifficulty = difficulty || "Easy";
 
     // Navigate to the room page with query params
     router.push(
-      `/computer/${roomCode}?gameRound=${selectedGameRound}&turn=${selectedTurn}&symbol=${selectedSymbol}&difficulty=${selectedDifficulty}`
+      `/computer/${roomCode}?gameRound=${gameRound}&turn=${turn}&symbol=${symbol}&difficulty=${difficulty}`
     );
   };
 
@@ -58,7 +43,7 @@ export default function CreateRoom() {
               Game Round
             </label>
             <div className="mt-1 grid grid-cols-4 space-x-2">
-              {["3 Round", "5 Round", "7 Round"].map((round) => (
+              {["1 Round", "3 Round", "5 Round", "7 Round"].map((round) => (
                 <button
                   key={round}
                   type="button"
@@ -72,17 +57,6 @@ export default function CreateRoom() {
                   {round}
                 </button>
               ))}
-              <button
-                type="button"
-                onClick={() => setGameRound("")}
-                className={`col-span-1 px-4 py-3 text-xs md:text-sm font-medium rounded-md shadow-sm ${
-                  gameRound === ""
-                    ? "bg-gray-700 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-              >
-                Random
-              </button>
             </div>
           </div>
 
@@ -106,17 +80,6 @@ export default function CreateRoom() {
                   {option}
                 </button>
               ))}
-              <button
-                type="button"
-                onClick={() => setTurn("")}
-                className={`px-4 py-3 text-xs md:text-sm font-medium text-center rounded-md shadow-sm ${
-                  turn === ""
-                    ? "bg-gray-600 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-              >
-                Random
-              </button>
             </div>
           </div>
 
@@ -140,17 +103,6 @@ export default function CreateRoom() {
                   {sym}
                 </button>
               ))}
-              <button
-                type="button"
-                onClick={() => setSymbol("")}
-                className={`px-4 py-3 text-xs md:text-sm font-medium text-center rounded-md shadow-sm ${
-                  symbol === ""
-                    ? "bg-gray-700 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-              >
-                Random
-              </button>
             </div>
           </div>
 
@@ -159,7 +111,7 @@ export default function CreateRoom() {
             <label className="block text-sm font-bold mb-1 text-gray-700">
               Difficulty
             </label>
-            <div className="mt-1 grid grid-cols-4 space-x-2">
+            <div className="mt-1 grid grid-cols-3 space-x-2">
               {["Easy", "Medium", "Hard"].map((diff) => (
                 <button
                   key={diff}
@@ -174,17 +126,6 @@ export default function CreateRoom() {
                   {diff}
                 </button>
               ))}
-              <button
-                type="button"
-                onClick={() => setDifficulty("")}
-                className={`col-span-1 px-4 py-3 text-xs md:text-sm font-medium text-center rounded-md shadow-sm ${
-                  difficulty === ""
-                    ? "bg-gray-700 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-              >
-                Random
-              </button>
             </div>
           </div>
 
@@ -196,10 +137,6 @@ export default function CreateRoom() {
             >
               Play
             </button>
-            <h1 className="text-xs pt-2 font-light">
-              Just click <span className="font-normal">Play</span> to start a{" "}
-              <span className="font-normal">Random</span> game
-            </h1>
           </div>
         </form>
       </section>

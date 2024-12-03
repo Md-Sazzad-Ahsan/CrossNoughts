@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation"; // To get query params if nee
 import Board from "@/components/BoardDesign/Board";
 import GameOver from "@/components/Modals/GameOver"
 import Link from "next/link";
+import PlayerInfo from "@/components/BoardDesign/PlayerInfo";
 
 export default function ComputerRoomPage() {
   const searchParams = useSearchParams();
@@ -27,6 +28,7 @@ export default function ComputerRoomPage() {
   const [playerScore, setPlayerScore] = useState(0);
   const [computerScore, setComputerScore] = useState(0);
   const [tieScore, setTieScore] = useState(0);
+  const [showRoundText, setShowRoundText] = useState(true);
 
   // Initialize isPlayerTurn based on the firstTurn parameter and currentRound
   const [isPlayerTurn, setIsPlayerTurn] = useState(
@@ -257,6 +259,16 @@ export default function ComputerRoomPage() {
   };
 
   useEffect(() => {
+    setShowRoundText(true);
+    const timeout = setTimeout(() => {
+      setShowRoundText(false);
+    }, 2000);
+  
+    return () => clearTimeout(timeout);
+  }, [currentRound]);
+  
+
+  useEffect(() => {
     if (!isPlayerTurn && !winner && !gameOver) {
       const move = getComputerMove(grid);
 
@@ -282,6 +294,10 @@ export default function ComputerRoomPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPlayerTurn, winner]);
 
+  const player1 = "You";
+  const player2 = "Computer";
+  const currentTurn = isPlayerTurn ? player1 : player2;
+
   return (
     <div className="flex flex-col items-center mt-20">
     {gameOver ? (
@@ -303,13 +319,24 @@ export default function ComputerRoomPage() {
 />
 
 ) : (
-  <div className="mt-20 md:mt-32">
-    <h1 className="text-2xl font-bold text-gray-700 text-center pb-5 uppercase">
-      Round {currentRound} of {totalRounds}
-    </h1>
+  <div className="mt-20">
+    <div className="mb-10">
+    <PlayerInfo
+  player1={player1}
+  player2={player2}
+  symbol={playerSymbol}
+  turn={currentTurn}
+/>
+
+          </div>
     <Board grid={grid} onCellClick={handlePlayerMove} />
+    {showRoundText && (
+       <h1 className="text-sm font-bold text-gray-400 text-center py-5 uppercase">
+       Round {currentRound} of {totalRounds}
+     </h1>     
+      )}
     {winner && (
-      <p className="pt-5 uppercase text-center font-bold">
+      <p className="pt-5 uppercase text-center font-bold text-gray-400">
         {winner === "Tie" ? "It's a Tie!" : `Winner: ${winner}`}
       </p>
     )}

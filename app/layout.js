@@ -14,8 +14,34 @@ const geistMono = localFont({
 });
 
 export const metadata = {
+  manifest: "/manifest.json",
   title: "CrossNoughts",
-  description: "An wonderful puzzle game!",
+  description:
+    "An advance puzzle game similar of Tic Tac Toe with more feature such as play with friend online and play with computer etc.",
+  openGraph: {
+    title: "CrossNoughts",
+    description:
+      "An advance puzzle game similar of Tic Tac Toe with more feature such as play with friend online and play with computer etc.",
+    type: "website",
+    locale: "en_US",
+    url: "https://crossnoughts.vercel.app",
+    images: [
+      {
+        url: "https://crossnoughts.vercel.app/images/opengraph-image.png",
+        width: 1200,
+        height: 630,
+        alt: "CrossNoughts Open Graph Image",
+      },
+    ],
+    siteName: "CrossNoughts Puzzle Game",
+  },
+  twitter: {
+    title: "CrossNoughts",
+    description:
+    "An advance puzzle game similar of Tic Tac Toe with more feature such as play with friend online and play with computer etc.",
+    card: "summary_large_image",
+  },
+  metadataBase: new URL("https://crossnoughts.vercel.app"),
 };
 
 export default function RootLayout({ children }) {
