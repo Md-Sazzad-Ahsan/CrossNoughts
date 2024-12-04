@@ -40,7 +40,7 @@ export default function CreateRoom() {
           {/* Rounds */}
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1">
-              Game Round
+            Game Over after
             </label>
             <div className="mt-1 grid grid-cols-4 space-x-2">
               {["1 Round", "3 Round", "5 Round", "7 Round"].map((round) => (

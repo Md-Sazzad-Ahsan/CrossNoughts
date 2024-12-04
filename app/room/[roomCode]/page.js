@@ -9,13 +9,12 @@ import PlayerInfo from "@/components/BoardDesign/PlayerInfo";
 export default function RoomPage() {
   const { roomCode } = useParams();
   const searchParams = useSearchParams();
-
-  const gameRound = parseInt(searchParams.get("gameRound")) || 1; // Total rounds
+  const gameRound = parseInt(searchParams.get("gameRound")) || 1;
   const turn = searchParams.get("turn");
   const symbol = searchParams.get("symbol");
 
   const [grid, setGrid] = useState(Array(9).fill(null));
-  const [isHostTurn, setIsHostTurn] = useState(turn === "I play first");
+  const [isHostTurn, setIsHostTurn] = useState(turn === "host");
   const [hostSymbol, setHostSymbol] = useState(symbol);
   const [opponentSymbol, setOpponentSymbol] = useState(
     symbol === "X" ? "O" : "X"
@@ -53,32 +52,30 @@ export default function RoomPage() {
 
   const handleMove = (index) => {
     if (grid[index] || winner) return;
-
+  
     const newGrid = [...grid];
     const currentSymbol = isHostTurn ? hostSymbol : opponentSymbol;
-    const currentMoves = isHostTurn ? hostMoves : opponentMoves;
-
+    const currentMoves = isHostTurn ? [...hostMoves] : [...opponentMoves]; // Create a new copy
+  
     if (currentMoves.length >= 3) {
-      // Remove the oldest move
       const [firstMove, ...remainingMoves] = currentMoves;
       newGrid[firstMove] = null;
       currentMoves.splice(0, 1);
     }
-
+  
     newGrid[index] = currentSymbol;
     currentMoves.push(index);
-
+  
     if (isHostTurn) {
-      setHostMoves([...currentMoves]);
+      setHostMoves(currentMoves); // Always set the new state
     } else {
-      setOpponentMoves([...currentMoves]);
+      setOpponentMoves(currentMoves); // Same here
     }
-
+  
     setGrid(newGrid);
-
     const result = checkWinner(newGrid);
     setWinner(result);
-
+  
     if (result) {
       if (result === hostSymbol) {
         setHostWins(hostWins + 1);
@@ -88,16 +85,16 @@ export default function RoomPage() {
         setTieCount(tieCount + 1);
       }
     }
-
+  
     setIsHostTurn(!isHostTurn);
   };
-
+  
   const resetRound = () => {
     setGrid(Array(9).fill(null));
     setHostMoves([]);
     setOpponentMoves([]);
     setWinner(null);
-    setIsHostTurn(turn === "I play first");
+    setIsHostTurn(turn === "host");
   };
 
   const resetGame = () => {
@@ -148,7 +145,7 @@ export default function RoomPage() {
             score: hostWins,
           }}
           computer={{
-            name: "Opponent",
+            name: "Player 2",
             avatar: "/images/profileImage.jpg",
             score: opponentWins,
           }}

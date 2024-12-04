@@ -13,7 +13,7 @@ export default function HomePage() {
   const closeModal = () => setModalType(null);
 
   return (
-    <div className="max-w-3xl mx-auto mt-32 mb-12 md:my-20 sm:px-5">
+    <div className="max-w-3xl mx-auto mt-40 md:mt-32 mb-12 md:mb-20 sm:px-5">
       <section className="px-5 md:border border-gray-200 rounded-md md:shadow-sm">
         <h1 className="text-5xl md:text-6xl text-center sm:py-10 md:pt-10 font-bold text-gray-800">CrossNoughts</h1>
         <div className="md:px-10">

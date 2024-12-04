@@ -1,28 +1,6 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
-const playerSchema = new Schema(
-  {
-    name: {
-      type: String,  
-      required: true,
-    },
-    username: {
-      type: String,  
-      required: true,
-      unique: true
-    },
-    symbol: {
-      type: String,  
-      required: true, 
-    },
-    isHost: {
-      type: Boolean, 
-    }
-  },
-  { timestamps: true }
-);
-
 const gameSchema = new Schema(
     {
       roomCode: {
@@ -31,7 +9,7 @@ const gameSchema = new Schema(
         unique: true,
       },
       gameRound: {
-        type: Number, // Changed to a number for easier handling (e.g., 3, 5, 7)
+        type: Number,
         required: true,
       },
       hostSymbol: {
@@ -41,7 +19,7 @@ const gameSchema = new Schema(
       },
       firstTurn: {
         type: String,
-        enum: ['playerOne', 'playerTwo', 'computer'],
+        enum: ['host', 'opponent', 'computer'],
         required: true,
       },
       difficulty: {
@@ -54,14 +32,14 @@ const gameSchema = new Schema(
         enum: ['waiting', 'ongoing', 'completed'],
         required: true, 
       },
-      boardState: {
-        type: [[String]], // 2D array for game board state
-        default: null, 
-      },
-      playerOne: { type: playerSchema },
-      playerTwo: { type: playerSchema },
     },
     { timestamps: true }
   );  
-
-export default mongoose.models.Game || mongoose.model("Game", gameSchema);
+  
+  export default mongoose.models.Game || mongoose.model("Game", gameSchema);
+  // boardState: {
+  //   type: [[String]], // 2D array for game board state
+  //   default: null, 
+  // },
+  // playerOne: { type: playerSchema },
+  // playerTwo: { type: playerSchema },
