@@ -1,36 +1,53 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { getDatabase, ref, get, update } from "firebase/database"; // Firebase functions
 
-export default function CreateRoom() {
+export default function JoinRoom() {
   const [roomCode, setRoomCode] = useState("");
   const [error, setError] = useState(null); // For error handling
+  const [playerId, setPlayerId] = useState(null); // Unique player identifier
   const router = useRouter();
+
+  // Generate or retrieve the player ID
+  useEffect(() => {
+    let storedPlayerId = localStorage.getItem("playerId");
+    if (!storedPlayerId) {
+      storedPlayerId = generatePlayerId(); // Generate a new ID
+      localStorage.setItem("playerId", storedPlayerId);
+    }
+    setPlayerId(storedPlayerId);
+  }, []);
+
+  // Generate a unique player ID
+  const generatePlayerId = () => Math.random().toString(36).substring(2, 15);
 
   const handleJoinRoom = async () => {
     try {
-      // Fetch room details from the backend
-      const response = await fetch(`/api/room/${roomCode}`, {
-        method: "GET",
-      });
+      const db = getDatabase(); // Initialize Firebase Database
+      const roomRef = ref(db, `rooms/${roomCode}`);
+      const snapshot = await get(roomRef);
 
-      const result = await response.json();
-
-      if (!result.success) {
+      if (!snapshot.exists()) {
         setError("Room not found. Please check the code and try again.");
         return;
       }
 
-      const { gameRound, firstTurn, hostSymbol } = result.data;
+      const roomData = snapshot.val();
 
-      // Adjust values for the joining player
-      const turn = firstTurn === "host" ? "opponent" : "host";
-      const symbol = hostSymbol === "X" ? "O" : "X";
+      if (roomData.status !== "waiting") {
+        setError("This room is no longer available or the game has already started.");
+        return;
+      }
 
-      // Redirect to the game room with query params
-      router.push(
-        `/room/${roomCode}?gameRound=${gameRound}&turn=${turn}&symbol=${symbol}`
-      );
+      // Update the room with the player's ID
+      await update(roomRef, {
+        playerTwoId: playerId,
+        status: "ongoing", // Change status to "ongoing" after the opponent joins
+      });
+
+      // Redirect to the game room with the playerId
+      router.push(`/room/${roomCode}?playerTwoId=${playerId}`);
     } catch (err) {
       console.error("Error joining room:", err);
       setError("An error occurred. Please try again.");

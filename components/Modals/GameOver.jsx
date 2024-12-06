@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React from "react";
 
-const WinnerLoserModal = ({ player, computer, onRestart, onHome }) => {
+const GameOver = ({ player, computer, onRestart, onHome }) => {
   // Determine the winner and loser based on scores
   const isPlayerWinner = player.score > computer.score;
   const winner = isPlayerWinner ? player : computer;
@@ -75,4 +75,4 @@ const WinnerLoserModal = ({ player, computer, onRestart, onHome }) => {
   );
 };
 
-export default WinnerLoserModal;
+export default GameOver;
