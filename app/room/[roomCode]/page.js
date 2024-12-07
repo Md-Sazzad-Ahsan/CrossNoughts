@@ -5,6 +5,8 @@ import { useParams, useSearchParams } from "next/navigation";
 import { ref, get, onValue, update } from "firebase/database"; // Firebase functions
 import { db } from "@/app/firebaseConfig"; // Firebase functions
 import GameOver from "@/components/Modals/GameOver";
+import Waiting from "@/components/Modals/Waiting"; // Assuming your modal is here
+
 import PlayerInfo from "@/components/BoardDesign/PlayerInfo";
 
 const Board = ({ grid, onCellClick }) => {
@@ -47,7 +49,6 @@ export default function RoomPage() {
   const playerTwoIdFromUrl = searchParams.get("playerTwoId");
 
   const [board, setBoard] = useState(Array(9).fill(null));
-  const [isHostTurn, setIsHostTurn] = useState(false);
   const [hostSymbol, setHostSymbol] = useState("X");
   const [opponentSymbol, setOpponentSymbol] = useState("O");
   const [hostMoves, setHostMoves] = useState([]);
@@ -60,10 +61,12 @@ export default function RoomPage() {
   const [gameOver, setGameOver] = useState(false);
   const [showRoundText, setShowRoundText] = useState(true);
   const [currentTurn, setCurrentTurn] = useState(null);
-  const [playerRole, setPlayerRole] = useState(null); // Track if the player is "host" or "opponent"
-  const [gameRound, setGameRound] = useState(1); // Number of rounds
+  const [playerRole, setPlayerRole] = useState(null); 
+  const [gameRound, setGameRound] = useState(1); 
+  const [playerTwoId, setPlayerTwoId] = useState(""); 
+  const [status, setStatus] = useState("waiting"); 
 
-  const roomRef = ref(db, `rooms/${roomCode}`); // Use the already initialized `db`
+  const roomRef = ref(db, `rooms/${roomCode}`); 
 
   useEffect(() => {
     const fetchRoomData = async () => {
@@ -84,15 +87,17 @@ export default function RoomPage() {
         ? roomData.board
         : Array(9).fill("");
       setBoard(initialBoard);
-
       // Initialize player symbols
       const playerOneSym = roomData.playerOneSym || "X"; // Default to "X" for Player 1
       const playerTwoSym = roomData.playerTwoSym || "O"; // Default to "O" for Player 2
+      setPlayerTwoId(roomData.playerTwoId || "");
+      setStatus(roomData.status);
+      setStatus(playerTwoIdFromUrl ? "ready" : "waiting");
 
       // Assign the correct symbols based on player role
       setHostSymbol(playerOneSym); // Host gets player one symbol
       setOpponentSymbol(playerTwoSym); // Opponent gets player two symbol
-
+      setStatus(roomData.status);
       setGameRound(roomData.gameRound || 1);
 
       // Determine the current player role
@@ -116,10 +121,13 @@ export default function RoomPage() {
     const unsubscribe = onValue(roomRef, (snapshot) => {
       if (snapshot.exists()) {
         const roomData = snapshot.val();
+        setStatus(roomData.status);
         const updatedBoard = Array.isArray(roomData.board)
           ? roomData.board
           : Array(9).fill(null);
+       
         setBoard(updatedBoard);
+        setPlayerTwoId(roomData.playerTwoId || "");
         setCurrentTurn(roomData.currentTurn || "host");
         setWinner(roomData.winner || null);
         setHostMoves(roomData.hostMoves || []);
@@ -244,11 +252,6 @@ useEffect(() => {
 }, [winner, roundCount, gameRound]);
 
 
-
-
-  const player1 = playerRole === "host" ? "You" : "Player 2";
-  const player2 = playerRole === "opponent" ? "You" : "Player 2";
-
   const resetRound = async () => {
     // Clear the board locally
     setBoard(Array(9).fill("")); // Clear the board
@@ -291,9 +294,35 @@ useEffect(() => {
     }
   };
 
+  const handleGameStart = () => {
+    const gameRef = ref(db, `rooms/${roomCode}`);
+    update(gameRef, { status: "ongoing" })
+      .then(() => {
+        console.log("Game status updated to 'ongoing'.");
+        // Update local state to trigger re-render and close the modal
+        setStatus("ongoing");  // Make sure to set the local state as well
+      })
+      .catch((error) => console.error("Error updating game status:", error));
+  };
+  
+  
+
+  const player1 = playerRole === "host" ? "You" : "Player 2";
+  const player2 = playerRole === "opponent" ? "You" : "Player 2";
+
   return (
     <div className="flex flex-col items-center mt-20">
-      {gameOver ? (
+  {status === "waiting" || status === "ready" ? (
+  <Waiting
+    playerOneId={playerOneIdFromUrl}
+    playerTwoId={playerTwoId}
+    playerOneSym={hostSymbol} // The host symbol, likely "X"
+    playerTwoSym={opponentSymbol} // The opponent symbol, likely "O"
+    roomCode={roomCode} // Pass the room code
+    onStart={handleGameStart}
+  />
+) : gameOver ? (
+
         <GameOver
           player={{
             name: "You",

@@ -43,7 +43,7 @@ export default function JoinRoom() {
       // Update the room with the player's ID
       await update(roomRef, {
         playerTwoId: playerId,
-        status: "ongoing", // Change status to "ongoing" after the opponent joins
+        status: "ready", // Change status to "ongoing" after the opponent joins
       });
 
       // Redirect to the game room with the playerId
@@ -83,7 +83,7 @@ export default function JoinRoom() {
                 setRoomCode(e.target.value);
                 setError(null); // Clear error on input change
               }}
-              className="mt-5 mx-auto w-full px-5 py-2 text-center text-gray-600 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm"
+              className="mt-5 mx-auto w-full px-5 py-3 text-center text-gray-600 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm"
             />
           </div>
 
