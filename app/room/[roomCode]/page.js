@@ -1,3 +1,4 @@
+//app/room/[roomCode]/page.js
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -6,7 +7,6 @@ import { ref, get, onValue, update } from "firebase/database"; // Firebase funct
 import { db } from "@/app/firebaseConfig"; // Firebase functions
 import GameOver from "@/components/Modals/GameOver";
 import Waiting from "@/components/Modals/Waiting"; // Assuming your modal is here
-
 import PlayerInfo from "@/components/BoardDesign/PlayerInfo";
 
 const Board = ({ grid, onCellClick }) => {
