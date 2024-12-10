@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
+import { IoSettingsOutline } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation"; // Use next/navigation for client components
 
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
-import ToggleSwitch from "@/components/Header/ToggleSwitch";
 
 const Header = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -77,13 +77,13 @@ const Header = () => {
               HighScore
             </Link>
             {/* <ToggleSwitch checked={darkMode} onChange={handleToggle} /> */}
-            <Link href="/Profile">
+            <Link href="/profile">
               <button
-                className={`bg-gray-600 text-gray-50 py-1 px-8 rounded-lg hover:bg-gray-500 font-semibold ${getActiveClass(
+                className={`bg-gray-600 text-white py-2 px-2 rounded-lg hover:bg-gray-500 font-bold ${getActiveClass(
                   "/profile"
                 )}`}
               >
-                Profile
+               <IoSettingsOutline />
               </button>
             </Link>
           </nav>
@@ -109,10 +109,10 @@ const Header = () => {
           </div> */}
           <button
             onClick={toggleSidebar}
-            className="text-3xl py-2 text-gray-700"
+            className="text-2xl py-2 text-gray-600"
             aria-label="Menu"
           >
-            ☰
+           <IoSettingsOutline />
           </button>
         </section>
       </motion.header>
@@ -159,11 +159,11 @@ const Header = () => {
           <Link
             href="/profile"
             onClick={closeSidebar}
-            className={`mt-4 w-full bg-gray-600 text-gray-50 py-2 px-5 rounded ${getActiveClass(
+            className={`mt-4 w-full bg-gray-600 text-gray-50 hover:text-white py-2 px-5 rounded ${getActiveClass(
               "/profile"
             )}`}
           >
-            Profile
+            Profile Setting
           </Link>
         </nav>
       </motion.aside>

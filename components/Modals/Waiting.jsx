@@ -79,7 +79,7 @@ const Waiting = ({
               <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                 <span className="text-gray-600">👤</span>
               </div>
-              <span className="text-lg font-medium">{playerOneId || "Player 1"}</span>
+              <span className="text-lg font-medium">{playerOneId || "Host"}</span>
             </div>
             <span className="text-xl font-bold">{playerOneSym}</span>
           </div>
@@ -99,7 +99,7 @@ const Waiting = ({
 
           {/* Room Code Display */}
           <div className="h-16 border border-dashed border-gray-300 rounded-lg flex items-center justify-center">
-            <span className="text-gray-500 text-sm">Room Code: {roomCode}</span>
+            <span className="text-gray-500 text-md">Room Code: {roomCode}</span>
           </div>
 
           {/* Invite Button */}

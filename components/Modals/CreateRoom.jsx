@@ -36,7 +36,8 @@ export default function CreateRoom() {
         playerOneId: playerId, // Assign the unique player ID
         playerTwoId: "", // Initially empty
         status: "waiting", // Default room status
-        gameRound, // Default to 1 if not selected
+        gameRound,
+        remaining: gameRound, // Default to 1 if not selected
         firstTurn: turn, // First turn
         currentTurn: turn, // The current turn
         playerOneSym: symbol, // Host symbol
