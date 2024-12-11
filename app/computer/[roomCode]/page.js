@@ -4,8 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation"; // To get query params if needed
 import Board from "@/components/BoardDesign/Board";
 import GameOver from "@/components/Modals/GameOver"
-import Link from "next/link";
-import PlayerInfo from "@/components/BoardDesign/PlayerInfo";
+import ComputerInfo from "@/components/BoardDesign/ComputerInfo";
 
 export default function ComputerRoomPage() {
   const searchParams = useSearchParams();
@@ -321,7 +320,7 @@ export default function ComputerRoomPage() {
 ) : (
   <div className="mt-20">
     <div className="mb-10">
-    <PlayerInfo
+    <ComputerInfo
   player1={player1}
   player2={player2}
   symbol={playerSymbol}

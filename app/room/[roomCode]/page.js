@@ -274,25 +274,30 @@ useEffect(() => {
   };
 
   const resetGame = async () => {
-    // Reset the board and winner locally
-    setBoard(Array(9).fill("")); // Clear the board
-    setWinner(null); // Reset winner
-    setHostMoves([]); // Clear host's moves
-    setOpponentMoves([]); // Clear opponent's moves
-    setRoundCount(1); // Reset round count
-
-    // Update Firebase with the cleared board and winner but retain other state
     try {
       await update(roomRef, {
-        board: Array(9).fill(""), // Clear the board in Firebase
-        winner: null, // Reset winner in Firebase
-        hostMoves: [], // Clear host moves in Firebase
-        opponentMoves: [], // Clear opponent moves in Firebase
+        board: Array(9).fill(""),
+        winner: null,
+        hostMoves: [],
+        opponentMoves: [],
+        roundCount: 1,
+        currentTurn: "host",
+        status: "ready",
       });
+  
+      setBoard(Array(9).fill(""));
+      setWinner(null);
+      setHostMoves([]);
+      setOpponentMoves([]);
+      setRoundCount(1);
+      setCurrentTurn("host");
+      setGameOver(false);
     } catch (error) {
       console.error("Error resetting game:", error);
     }
   };
+  
+  
 
   const handleGameStart = () => {
     const gameRef = ref(db, `rooms/${roomCode}`);

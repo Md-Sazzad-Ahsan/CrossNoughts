@@ -37,7 +37,6 @@ export default function CreateRoom() {
         playerTwoId: "", // Initially empty
         status: "waiting", // Default room status
         gameRound,
-        remaining: gameRound, // Default to 1 if not selected
         firstTurn: turn, // First turn
         currentTurn: turn, // The current turn
         playerOneSym: symbol, // Host symbol
@@ -65,10 +64,10 @@ export default function CreateRoom() {
         <form className="space-y-6">
           {/* Rounds */}
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1">
+            <label className="hidden lg:block text-sm font-bold text-gray-700 mb-1">
               Game Over after
             </label>
-            <div className="mt-1 grid grid-cols-4 space-x-2 text-center">
+            <div className="hidden mt-1 lg:grid grid-cols-4 space-x-2 text-center">
               {[1, 3, 5, 7].map((round) => (
                 <button
                   key={round}
